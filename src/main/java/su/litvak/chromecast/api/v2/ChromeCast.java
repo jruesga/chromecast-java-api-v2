@@ -24,7 +24,6 @@ import java.util.Map;
  * ChromeCast device - main object used for interaction with ChromeCast dongle.
  */
 public class ChromeCast {
-    public final static String SERVICE_TYPE = "_googlecast._tcp.";
 
     private final EventListenerHolder eventListenerHolder = new EventListenerHolder();
 
