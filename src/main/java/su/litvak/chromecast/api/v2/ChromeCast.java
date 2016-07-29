@@ -44,6 +44,7 @@ public class ChromeCast {
     public ChromeCast(String address, int port, String name) {
         this.address = address;
         this.port = port;
+        this.name = name;
     }
 
     public String getName() {
