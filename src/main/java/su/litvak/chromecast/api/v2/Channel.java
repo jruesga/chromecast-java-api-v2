@@ -24,8 +24,6 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -45,7 +43,6 @@ import java.util.concurrent.atomic.AtomicLong;
  * Should never be used directly, use {@link su.litvak.chromecast.api.v2.ChromeCast} methods instead
  */
 class Channel implements Closeable {
-    private static final Logger LOG = LoggerFactory.getLogger(Channel.class);
     /**
      * Period for sending ping requests (in ms)
      */
@@ -113,7 +110,7 @@ class Channel implements Closeable {
             try {
                 write("urn:x-cast:com.google.cast.tp.heartbeat", StandardMessage.ping(), DEFAULT_RECEIVER_ID);
             } catch (IOException ioex) {
-                LOG.warn("Error while sending 'PING': {}", ioex.getLocalizedMessage());
+                ioex.printStackTrace();
             }
         }
     }
@@ -128,10 +125,8 @@ class Channel implements Closeable {
                 try {
                     message = read();
                     if (message.getPayloadType() == CastChannel.CastMessage.PayloadType.STRING) {
-                        LOG.debug(" <-- {}",  message.getPayloadUtf8());
                         final String jsonMSG = message.getPayloadUtf8().replaceFirst("\"type\"", "\"responseType\"");
                         if (jsonMSG == null || jsonMSG.isEmpty()) {
-                            LOG.warn(" <-- Received empty message. Ignore.");
                             continue;
                         }
 
@@ -161,7 +156,6 @@ class Channel implements Closeable {
                                     else {
                                         // Status events are sent with a requestId of zero
                                         // https://developers.google.com/cast/docs/reference/messages
-                                        LOG.warn("Unable to process request ID = {}, data: {}", requestId, jsonMSG);
                                     }
                                 }
                             } else if (message.getNamespace().equals("urn:x-cast:com.google.cast.tp.heartbeat")
@@ -180,24 +174,19 @@ class Channel implements Closeable {
                                 }
                             }
                         }
-                    } else {
-                        LOG.warn("Received unexpected {} message", message.getPayloadType());
                     }
                 } catch (InvalidProtocolBufferException ipbe) {
-                    LOG.debug("Error while processing protobuf: {}", ipbe.getLocalizedMessage());
+                    // Ignore
                 } catch (IOException ioex) {
-                    LOG.warn("Error while reading: {}", ioex.getLocalizedMessage());
                     String temp;
                     if (message != null &&  message.getPayloadUtf8() != null) {
                         temp = message.getPayloadUtf8();
                     } else {
                         temp = " null payload in message ";
                     }
-                    LOG.warn(" <-- {}", temp);
                     try {
                         close();
                     } catch (IOException e) {
-                        LOG.warn("Error while closing channel: {}", ioex.getLocalizedMessage());
                     }
                 }
             }
@@ -369,7 +358,6 @@ class Channel implements Closeable {
     }
 
     private void write(String namespace, String message, String destinationId) throws IOException {
-        LOG.debug(" --> {}", message);
         CastChannel.CastMessage msg = CastChannel.CastMessage.newBuilder()
                 .setProtocolVersion(CastChannel.CastMessage.ProtocolVersion.CASTV2_1_0)
                 .setSourceId(name)

@@ -15,8 +15,6 @@
  */
 package su.litvak.chromecast.api.v2;
 
-import javax.jmdns.JmDNS;
-import javax.jmdns.ServiceInfo;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
@@ -26,31 +24,25 @@ import java.util.Map;
  * ChromeCast device - main object used for interaction with ChromeCast dongle.
  */
 public class ChromeCast {
-    public final static String SERVICE_TYPE = "_googlecast._tcp.local.";
+    public final static String SERVICE_TYPE = "_googlecast._tcp.";
 
     private final EventListenerHolder eventListenerHolder = new EventListenerHolder();
 
     private String name;
     private final String address;
     private final int port;
-    private String appsURL;
-    private String application;
     private Channel channel;
-
-    public ChromeCast(JmDNS mDNS, String name) {
-        this.name = name;
-        ServiceInfo serviceInfo = mDNS.getServiceInfo(SERVICE_TYPE, name);
-        this.address = serviceInfo.getInet4Addresses()[0].getHostAddress();
-        this.port = serviceInfo.getPort();
-        this.appsURL = serviceInfo.getURLs().length == 0 ? null : serviceInfo.getURLs()[0];
-        this.application = serviceInfo.getApplication();
-    }
 
     public ChromeCast(String address) {
         this(address, 8009);
     }
 
     public ChromeCast(String address, int port) {
+        this.address = address;
+        this.port = port;
+    }
+
+    public ChromeCast(String address, int port, String name) {
         this.address = address;
         this.port = port;
     }
@@ -69,22 +61,6 @@ public class ChromeCast {
 
     public int getPort() {
         return port;
-    }
-
-    public String getAppsURL() {
-        return appsURL;
-    }
-
-    public void setAppsURL(String appsURL) {
-        this.appsURL = appsURL;
-    }
-
-    public String getApplication() {
-        return application;
-    }
-
-    public void setApplication(String application) {
-        this.application = application;
     }
 
     public synchronized void connect() throws IOException, GeneralSecurityException {
