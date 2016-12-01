@@ -15,24 +15,13 @@
  */
 package su.litvak.chromecast.api.v2;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
 
-/**
- * A custom event sent by a receiver app.
- */
-public class AppEvent {
-    @JsonProperty
-    public final String namespace;
-    @JsonProperty
-    public final String message;
-
-    AppEvent(String namespace, String message) {
-        this.namespace = namespace;
-        this.message = message;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("AppEvent{namespace: %s, message: %s}", this.namespace, this.message);
+class JacksonHelper {
+    static ObjectMapper createJSONMapper() {
+        ObjectMapper jsonMapper = new ObjectMapper();
+        jsonMapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return jsonMapper;
     }
 }
