@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Vitaly Litvak (vitavaque@gmail.com)
+ * Copyright 2017 Vitaly Litvak (vitavaque@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,24 +15,16 @@
  */
 package su.litvak.chromecast.api.v2;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-
 /**
- * A custom event sent by a receiver app.
+ * The listener interface for receiving connection open/close events. The class that is interested in processing
+ * connection events implements this interface, and object create with that class is registered
+ * with <code>ChromeCast</code> instance using the <code>registerConnectionListener</code> method.
+ * When connection event occurs, that object's <code>connectionEventReceived</code> is invoked.
+ *
+ * @see ChromeCastConnectionEvent
  */
-public class AppEvent {
-    @JsonProperty
-    public final String namespace;
-    @JsonProperty
-    public final String message;
+public interface ChromeCastConnectionEventListener {
 
-    AppEvent(String namespace, String message) {
-        this.namespace = namespace;
-        this.message = message;
-    }
+    void connectionEventReceived(ChromeCastConnectionEvent event);
 
-    @Override
-    public final String toString() {
-        return String.format("AppEvent{namespace: %s, message: %s}", this.namespace, this.message);
-    }
 }

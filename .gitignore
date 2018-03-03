@@ -2,6 +2,9 @@ out
 target
 *.iml
 .idea
+.settings
+.project
+.classpath
 
 *.class
 

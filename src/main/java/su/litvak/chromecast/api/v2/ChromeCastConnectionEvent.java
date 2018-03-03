@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Vitaly Litvak (vitavaque@gmail.com)
+ * Copyright 2017 Vitaly Litvak (vitavaque@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,23 @@
  */
 package su.litvak.chromecast.api.v2;
 
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-
 /**
- * Utility class for creating pre-configured instances of JSON mapper.
+ * Event fired when connection to ChromeCast device is either established or closed.
  */
-final class JacksonHelper {
-    private JacksonHelper() {}
+public class ChromeCastConnectionEvent {
+    /**
+     * Identifies type of event.
+     *
+     * <code>true</code> value means connection was established.
+     * <code>false</code> value means connection was closed.
+     */
+    private final boolean connected;
 
-    static ObjectMapper createJSONMapper() {
-        ObjectMapper jsonMapper = new ObjectMapper();
-        jsonMapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return jsonMapper;
+    ChromeCastConnectionEvent(final boolean connected) {
+        this.connected = connected;
+    }
+
+    public final boolean isConnected() {
+        return connected;
     }
 }

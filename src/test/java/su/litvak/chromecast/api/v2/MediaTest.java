@@ -15,23 +15,22 @@
  */
 package su.litvak.chromecast.api.v2;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.StringContains.containsString;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.junit.Test;
+import su.litvak.chromecast.api.v2.Media.StreamType;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.Test;
-
-import su.litvak.chromecast.api.v2.Media.StreamType;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.StringContains.containsString;
 
 public class MediaTest {
     final ObjectMapper jsonMapper = JacksonHelper.createJSONMapper();
 
     @Test
-    public void itIncludesOptionalFieldsWhenSet () throws Exception {
+    public void itIncludesOptionalFieldsWhenSet() throws Exception {
         Map<String, Object> customData = new HashMap<String, Object>();
         customData.put("a", "b");
         Map<String, Object> metadata = new HashMap<String, Object>();
@@ -47,7 +46,7 @@ public class MediaTest {
     }
 
     @Test
-    public void itDoseNotContainOptionalFieldsWhenNotSet () throws Exception {
+    public void itDoesNotContainOptionalFieldsWhenNotSet() throws Exception {
         Media m = new Media(null, null, null, null, null, null, null, null);
 
         String json = jsonMapper.writeValueAsString(m);
@@ -56,6 +55,7 @@ public class MediaTest {
         assertThat(json, not(containsString("streamType")));
         assertThat(json, not(containsString("customData")));
         assertThat(json, not(containsString("metadata")));
+        assertThat(json, not(containsString("metadataType")));
     }
 
 }

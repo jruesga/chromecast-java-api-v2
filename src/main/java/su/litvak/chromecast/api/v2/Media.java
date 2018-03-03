@@ -15,28 +15,73 @@
  */
 package su.litvak.chromecast.api.v2;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.annotate.JsonIgnore;
+import static su.litvak.chromecast.api.v2.Media.MetadataType.GENERIC;
+
 /**
- * Media streamed on ChromeCast device
+ * Media streamed on ChromeCast device.
  *
- * @see <a href="https://developers.google.com/cast/docs/reference/receiver/cast.receiver.media.MediaInformation">https://developers.google.com/cast/docs/reference/receiver/cast.receiver.media.MediaInformation</a>
+ * @see <a href="https://developers.google.com/cast/docs/reference/receiver/cast.receiver.media.MediaInformation">
+ *     https://developers.google.com/cast/docs/reference/receiver/cast.receiver.media.MediaInformation</a>
  */
 public class Media {
+    public static final String METADATA_TYPE = "metadataType";
+    public static final String METADATA_ALBUM_ARTIST = "albumArtist";
+    public static final String METADATA_ALBUM_NAME = "albumName";
+    public static final String METADATA_ARTIST = "artist";
+    public static final String METADATA_BROADCAST_DATE = "broadcastDate";
+    public static final String METADATA_COMPOSER = "composer";
+    public static final String METADATA_CREATION_DATE = "creationDate";
+    public static final String METADATA_DISC_NUMBER = "discNumber";
+    public static final String METADATA_EPISODE_NUMBER = "episodeNumber";
+    public static final String METADATA_HEIGHT = "height";
+    public static final String METADATA_IMAGES = "images";
+    public static final String METADATA_LOCATION_NAME = "locationName";
+    public static final String METADATA_LOCATION_LATITUDE = "locationLatitude";
+    public static final String METADATA_LOCATION_LONGITUDE = "locationLongitude";
+    public static final String METADATA_RELEASE_DATE = "releaseDate";
+    public static final String METADATA_SEASON_NUMBER = "seasonNumber";
+    public static final String METADATA_SERIES_TITLE = "seriesTitle";
+    public static final String METADATA_STUDIO = "studio";
+    public static final String METADATA_SUBTITLE = "subtitle";
+    public static final String METADATA_TITLE = "title";
+    public static final String METADATA_TRACK_NUMBER = "trackNumber";
+    public static final String METADATA_WIDTH = "width";
 
     /**
-     * <p>Stream type</p>
+     * Type of the data found inside {@link #metadata}. You can access the type with the key {@link #METADATA_TYPE}.
+     *
+     * You can access known metadata types using the constants in {@link Media}, such as {@link #METADATA_ALBUM_NAME}.
+     *
+     * @see <a href="https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_metadata">
+     *     https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_metadata</a>
+     * @see <a href="https://developers.google.com/android/reference/com/google/android/gms/cast/MediaMetadata">
+     *     https://developers.google.com/android/reference/com/google/android/gms/cast/MediaMetadata</a>
+     */
+    public enum MetadataType {
+        GENERIC,
+        MOVIE,
+        TV_SHOW,
+        MUSIC_TRACK,
+        PHOTO
+    }
+
+    /**
+     * <p>Stream type.</p>
      *
      * <p>Some receivers use upper-case (like Pandora), some use lower-case (like Google Audio),
-     * duplicate elements to support both</p>
+     * duplicate elements to support both.</p>
      *
-     * @see <a href="https://developers.google.com/cast/docs/reference/receiver/cast.receiver.media#.StreamType">https://developers.google.com/cast/docs/reference/receiver/cast.receiver.media#.StreamType</a>
+     * @see <a href="https://developers.google.com/cast/docs/reference/receiver/cast.receiver.media#.StreamType">
+     *     https://developers.google.com/cast/docs/reference/receiver/cast.receiver.media#.StreamType</a>
      */
     public enum StreamType {
         BUFFERED, buffered,
@@ -98,26 +143,46 @@ public class Media {
         this.tracks = tracks == null ? null : Collections.unmodifiableList(tracks);
     }
 
-    @Override
-    public int hashCode () {
-        return Arrays.hashCode(new Object[] { this.url, this.contentType, this.streamType, this.duration });
+    /**
+     * @return the type defined by the key {@link #METADATA_TYPE}.
+     */
+    @JsonIgnore
+    public final MetadataType getMetadataType() {
+        if (metadata  == null || !metadata.containsKey(METADATA_TYPE)) {
+            return GENERIC;
+        }
+
+        Integer ordinal = (Integer) metadata.get(METADATA_TYPE);
+        return ordinal < MetadataType.values().length ? MetadataType.values()[ordinal] : GENERIC;
     }
 
     @Override
-    public boolean equals (final Object obj) {
-        if (obj == null) return false;
-        if (obj == this) return true;
-        if (!(obj instanceof Media)) return false;
+    public final int hashCode() {
+        return Arrays.hashCode(new Object[] {this.url, this.contentType, this.streamType, this.duration});
+    }
+
+    @Override
+    public final boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Media)) {
+            return false;
+        }
         final Media that = (Media) obj;
-        return this.url == null ? that.url == null : this.url.equals(that.url) &&
-                this.contentType == null ? that.contentType == null : this.contentType.equals(that.contentType) &&
-                this.streamType == null ? that.streamType == null : this.streamType.equals(that.streamType) &&
-                this.duration == null ? that.duration == null : this.duration.equals(that.duration);
+        return this.url == null ? that.url == null : this.url.equals(that.url)
+                && this.contentType == null ? that.contentType == null : this.contentType.equals(that.contentType)
+                && this.streamType == null ? that.streamType == null : this.streamType.equals(that.streamType)
+                && this.duration == null ? that.duration == null : this.duration.equals(that.duration);
     }
 
     @Override
-    public String toString () {
-        return String.format("Media{url: %s, contentType: %s, duration: %s}", this.url, this.contentType, this.duration);
+    public final String toString() {
+        return String.format("Media{url: %s, contentType: %s, duration: %s}",
+                this.url, this.contentType, this.duration);
     }
 
 }

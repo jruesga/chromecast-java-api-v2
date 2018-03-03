@@ -1,4 +1,4 @@
-ChromeCast Java API v2
+ChromeCast Java API v2 [![Build Status](https://travis-ci.org/vitalidze/chromecast-java-api-v2.svg?branch=master)](https://travis-ci.org/vitalidze/chromecast-java-api-v2)
 ======================
 
 At the moment I have started implementing this library, there was a java [implementation of V1 Google ChromeCast protocol](https://github.com/entertailion/Caster), which seems to be deprecated and does not work for newly created applications. The new V2 protocol is implemented by tools that come with Cast SDK, which is available for Android, iOS and Chrome Extension as javascript. Also there is a third party [implementation of V2 in Node.js](https://github.com/vincentbernat/nodecastor). This project is a third party implementation of Google ChromeCast V2 protocol in java.
@@ -14,7 +14,7 @@ Library is available in maven central. Put lines below into you project's `pom.x
   <dependency>
     <groupId>su.litvak.chromecast</groupId>
     <artifactId>api-v2</artifactId>
-    <version>0.9.3</version>
+    <version>0.10.2</version>
   </dependency>
 ...
 </dependencies>
@@ -25,7 +25,7 @@ Or to `build.gradle` (`mavenCentral()` repository should be included in appropri
 ```groovy
 dependencies {
 // ...
-    runtime 'su.litvak.chromecast:api-v2:0.9.3'
+    runtime 'su.litvak.chromecast:api-v2:0.10.2'
 // ...
 }
 ```
@@ -52,7 +52,7 @@ To build library from sources:
   <dependency>
     <groupId>su.litvak.chromecast</groupId>
     <artifactId>api-v2</artifactId>
-    <version>0.9.4-SNAPSHOT</version>
+    <version>0.10.3-SNAPSHOT</version>
   </dependency>
 ...
 </dependencies>
@@ -73,8 +73,10 @@ Then wait until some device discovered and it will be available in list. Then de
 
 ```java
 ChromeCast chromecast = ChromeCasts.get().get(0);
-// Connect
-chromecast.connect();
+// Connect (optional) 
+// Needed only when 'autoReconnect' is 'false'. 
+// Usually not needed and connection will be established automatically.
+// chromecast.connect();
 // Get device status
 Status status = chromecast.getStatus();
 // Run application if it's not already running
@@ -92,7 +94,7 @@ chromecast.load("http://commondatastorage.googleapis.com/gtv-videos-bucket/sampl
 chromecast.load("Big Buck Bunny",           // Media title
                 "images/BigBuckBunny.jpg",  // URL to thumbnail based on media URL
                 "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", // media URL
-                "video/mp4" // media content type
+                null // media content type (optional, will be discovered automatically)
                 );
 ```
 
@@ -209,7 +211,8 @@ Projects using library
 ----------------------
 
 * [UniversalMediaServer](https://github.com/UniversalMediaServer/UniversalMediaServer) - powerful server application that serves media to various types of receivers (including ChromeCast)
-* [chromecastplayer](https://github.com/neocdtv/chromecastplayer) - simple media player with swing UI
+* [SwingChromecast](https://github.com/DylanMeeus/SwingChromecast) - A graphical user interface to interact with your chromecasts. (Written in Java 8 with swing)
+
 
 License
 -------

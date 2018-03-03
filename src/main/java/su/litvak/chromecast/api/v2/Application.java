@@ -15,14 +15,14 @@
  */
 package su.litvak.chromecast.api.v2;
 
-import java.util.Arrays;
 import org.codehaus.jackson.annotate.JsonProperty;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Application descriptor
+ * Application descriptor.
  */
 public class Application {
     public final String id;
@@ -31,6 +31,7 @@ public class Application {
     public final String statusText;
     public final String transportId;
     public final boolean isIdleScreen;
+    public final boolean launchedFromCloud;
     public final List<Namespace> namespaces;
 
     public Application(@JsonProperty("appId") String id,
@@ -38,6 +39,7 @@ public class Application {
                        @JsonProperty("sessionId") String sessionId,
                        @JsonProperty("statusText") String statusText,
                        @JsonProperty("isIdleScreen") boolean isIdleScreen,
+                       @JsonProperty("launchedFromCloud") boolean launchedFromCloud,
                        @JsonProperty("transportId") String transportId,
                        @JsonProperty("namespaces") List<Namespace> namespaces) {
         this.id = id;
@@ -47,14 +49,17 @@ public class Application {
         this.transportId = transportId;
         this.namespaces = namespaces == null ? Collections.<Namespace>emptyList() : namespaces;
         this.isIdleScreen = isIdleScreen;
+        this.launchedFromCloud = launchedFromCloud;
     }
 
     @Override
-    public String toString() {
-        final String namespaces = this.namespaces == null ? "<null>" : Arrays.toString(this.namespaces.toArray());
+    public final String toString() {
+        final String namespacesString = this.namespaces == null ? "<null>" : Arrays.toString(this.namespaces.toArray());
 
-        return String.format("Application{id: %s, name: %s, sessionId: %s, statusText: %s, transportId: %s, isIdleScreen: %b, namespaces: %s}",
-                this.id, this.name, this.sessionId, this.statusText, this.transportId, this.isIdleScreen, namespaces);
+        return String.format("Application{id: %s, name: %s, sessionId: %s, statusText: %s, transportId: %s,"
+                        + " isIdleScreen: %b, launchedFromCloud: %b, namespaces: %s}",
+            this.id, this.name, this.sessionId, this.statusText, this.transportId,
+                this.isIdleScreen, this.launchedFromCloud, namespacesString);
     }
 
 }

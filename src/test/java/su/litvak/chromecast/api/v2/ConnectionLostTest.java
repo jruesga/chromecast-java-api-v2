@@ -15,14 +15,16 @@
  */
 package su.litvak.chromecast.api.v2;
 
-import static org.junit.Assert.*;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.ConnectException;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class ConnectionLostTest {
     MockedChromeCast chromeCastStub;
@@ -54,7 +56,9 @@ public class ConnectionLostTest {
 
     @After
     public void shutdown() throws IOException {
-        cast.disconnect();
+        if (cast.isConnected()) {
+            cast.disconnect();
+        }
         chromeCastStub.close();
     }
 }
